@@ -28,6 +28,7 @@ public class SauceDemoTest {
         System.out.println("🧩 Running test: " + testInfo.getDisplayName() + " on " + browser);
     }
 
+    // Positive Test Case: Login with valid user
     @Test
     @Order(1)
     @DisplayName("Login with valid user")
@@ -42,8 +43,76 @@ public class SauceDemoTest {
         Assertions.assertTrue(driver.getCurrentUrl().contains("inventory.html"));
     }
 
+    // Negative Test Case 1: Login with invalid username
     @Test
-    @Order(2)   
+    @Order(2)
+    @DisplayName("Login with invalid username")
+    void testLoginWithInvalidUsername() {
+        WebDriver driver = DriverManager.getDriver();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name"))).sendKeys("invalid_user");
+        driver.findElement(By.id("password")).sendKeys("secret_sauce");
+        driver.findElement(By.id("login-button")).click();
+
+        WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h3[@data-test=\"error\"]")));
+        Assertions.assertEquals("Epic sadface: Username and password do not match any user in this service", errorMessage.getText());
+    }
+
+    // Negative Test Case 2: Login with invalid password
+    @Test
+    @Order(3)
+    @DisplayName("Login with invalid password")
+    void testLoginWithInvalidPassword() {
+        WebDriver driver = DriverManager.getDriver();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name"))).sendKeys("standard_user");
+        driver.findElement(By.id("password")).sendKeys("wrong_password");
+        driver.findElement(By.id("login-button")).click();
+
+        WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h3[@data-test=\"error\"]")));
+        Assertions.assertEquals("Epic sadface: Username and password do not match any user in this service", errorMessage.getText());
+    }
+
+    // Negative Test Case 3: Login with empty username and password
+    @Test
+    @Order(4)
+    @DisplayName("Login with empty username and password")
+    void testLoginWithEmptyCredentials() {
+        WebDriver driver = DriverManager.getDriver();
+        driver.findElement(By.id("login-button")).click();
+
+        WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h3[@data-test=\"error\"]")));
+        Assertions.assertTrue(errorMessage.getText().contains("Epic sadface: Username is required"));
+    }
+
+    // Negative Test Case 4: Login with locked-out user
+    @Test
+    @Order(5)
+    @DisplayName("Login with locked-out user")
+    void testLoginWithLockedOutUser() {
+        WebDriver driver = DriverManager.getDriver();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name"))).sendKeys("locked_out_user");
+        driver.findElement(By.id("password")).sendKeys("secret_sauce");
+        driver.findElement(By.id("login-button")).click();
+
+        WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h3[@data-test=\"error\"]")));
+        Assertions.assertEquals("Epic sadface: Sorry, this user has been locked out.", errorMessage.getText());
+    }
+
+    // Negative Test Case 5: Login with invalid format username
+    @Test
+    @Order(6)
+    @DisplayName("Login with invalid username format")
+    void testLoginWithInvalidUsernameFormat() {
+        WebDriver driver = DriverManager.getDriver();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name"))).sendKeys("user!@#$%");
+        driver.findElement(By.id("password")).sendKeys("secret_sauce");
+        driver.findElement(By.id("login-button")).click();
+
+        WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h3[@data-test=\"error\"]")));
+        Assertions.assertTrue(errorMessage.getText().contains("Epic sadface: Username and password do not match any user in this service"));
+    }
+
+    @Test
+    @Order(7)   
     @DisplayName("Add item to cart and checkout")
     void testAddToCartAndCheckout() {
         WebDriver driver = DriverManager.getDriver();

@@ -14,21 +14,20 @@ public class ScreenshotOnFailureExtension implements AfterTestExecutionCallback 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
         if (context.getExecutionException().isPresent()) {
-            Object testInstance = context.getRequiredTestInstance();
-            WebDriver driver = (WebDriver) testInstance.getClass()
-                    .getMethod("getDriver")
-                    .invoke(testInstance);
+            WebDriver driver = DriverManager.getDriver(); 
 
-            // 🧩 Tạo thư mục screenshots nếu chưa tồn tại
-            File screenshotDir = new File("target/screenshots");
-            if (!screenshotDir.exists()) {
-                screenshotDir.mkdirs();
+            if (driver != null) {
+                File screenshotDir = new File("target/screenshots");
+                if (!screenshotDir.exists()) {
+                    screenshotDir.mkdirs();
+                }
+
+                String testName = context.getTestMethod().get().getName();
+                File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                
+                FileUtils.copyFile(screenshot, new File(screenshotDir, testName + ".png"));
+                System.out.println("🧩 Screenshot taken for test: " + testName);
             }
-
-            // 🧩 Lưu ảnh với tên theo class và method
-            String testName = context.getTestMethod().get().getName();
-            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-            FileUtils.copyFile(screenshot, new File(screenshotDir, testName + ".png"));
         }
     }
 }

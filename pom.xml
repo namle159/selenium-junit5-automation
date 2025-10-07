@@ -46,6 +46,13 @@
       <version>2.0.12</version>
     </dependency>
 
+    <!-- ✅ Apache Commons IO (For saving screenshots on failure) -->
+    <!-- <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.11.0</version>
+    </dependency> -->
+
   </dependencies>
 
   <build>
@@ -61,8 +68,8 @@
             <include>**/*Test.java</include>
             <include>**/*Tests.java</include>
           </includes>
-          <parallel>methods</parallel> <!-- run tests in parallel -->
-          <threadCount>2</threadCount>
+          <parallel>methods</parallel> <!-- Run tests in parallel -->
+          <threadCount>2</threadCount> <!-- Number of threads to run in parallel -->
           <useModulePath>false</useModulePath>
         </configuration>
       </plugin>
