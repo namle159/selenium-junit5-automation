@@ -148,7 +148,7 @@ public class SauceDemoTest {
         wait.until(ExpectedConditions.elementToBeClickable(By.id("continue")));
 
         // Wait for a second to make sure the element is ready
-        Thread.sleep(1000);
+        Thread.sleep(5000);
 
         // Click the continue button
         WebElement continueButton = driver.findElement(By.id("continue"));
