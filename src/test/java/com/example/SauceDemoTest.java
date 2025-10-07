@@ -43,7 +43,7 @@ public class SauceDemoTest {
     }
 
     @Test
-    @Order(2)
+    @Order(2)   
     @DisplayName("Add item to cart and checkout")
     void testAddToCartAndCheckout() {
         WebDriver driver = DriverManager.getDriver();
@@ -59,7 +59,9 @@ public class SauceDemoTest {
 
         // Open cart
         wait.until(ExpectedConditions.elementToBeClickable(By.className("shopping_cart_link"))).click();
-        wait.until(ExpectedConditions.urlContains("cart.html"));
+        
+        // Wait for URL to change to cart page
+        wait.until(ExpectedConditions.urlContains("cart.html")); // Increased wait for cart page loading
 
         // Checkout (presence + scroll + JS click để tránh overlay/headless issues)
         WebElement checkout = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("checkout")));
