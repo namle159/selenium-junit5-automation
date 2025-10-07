@@ -141,22 +141,21 @@ public class SauceDemoTest {
 
         // Your info
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first-name"))).sendKeys("Nam");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("last-name"))).sendKeys("Le");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("postal-code"))).sendKeys("10000");
+        driver.findElement(By.id("last-name")).sendKeys("Le");
+        driver.findElement(By.id("postal-code")).sendKeys("10000");
 
         // Ensure the fields are populated before clicking continue
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("continue")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id=\"continue\"]")));
 
-        // Wait for a second to make sure the element is ready
-        Thread.sleep(5000);
+        WebElement continueButton = driver.findElement(By.xpath("//input[@id=\"continue\"]"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", continueButton);
 
         // Click the continue button
-        WebElement continueButton = driver.findElement(By.id("continue"));
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", continueButton);
 
-
         // Finish
-        WebElement finishButton = driver.findElement(By.id("finish"));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id=\"finish\"]")));
+        WebElement finishButton = driver.findElement(By.xpath("//button[@id=\"finish\"]"));
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", finishButton);
 
         // Verify by stable selector
