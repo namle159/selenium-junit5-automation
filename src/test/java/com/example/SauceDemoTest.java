@@ -24,7 +24,7 @@ public class SauceDemoTest {
         DriverManager.setDriver(driver);
         driver.manage().window().maximize();
         driver.get("https://www.saucedemo.com/");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // CI chậm hơn
+        wait = new WebDriverWait(driver, Duration.ofSeconds(30)); // CI chậm hơn
         System.out.println("🧩 Running test: " + testInfo.getDisplayName() + " on " + browser);
     }
 
