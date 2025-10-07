@@ -139,19 +139,25 @@ public class SauceDemoTest {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", checkout);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", checkout);
 
+        Thread.sleep(2000);
+
         // Your info
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first-name"))).sendKeys("Nam");
+
         driver.findElement(By.id("last-name")).sendKeys("Le");
+
         driver.findElement(By.id("postal-code")).sendKeys("10000");
+
 
         // Ensure the fields are populated before clicking continue
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id=\"continue\"]")));
+        driver.findElement(By.xpath("//input[@id=\"continue\"]")).click();;
 
-        WebElement continueButton = driver.findElement(By.xpath("//input[@id=\"continue\"]"));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", continueButton);
+        // // WebElement continueButton = driver.findElement(By.id("continue"));
+        // // ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", continueButton);
 
-        // Click the continue button
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", continueButton);
+        // // Click the continue button
+        // ((JavascriptExecutor) driver).executeScript("arguments[0].click();", continueButton);
 
         // Finish
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id=\"finish\"]")));
