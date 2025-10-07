@@ -141,12 +141,19 @@ public class SauceDemoTest {
 
         // Your info
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first-name"))).sendKeys("Nam");
-        driver.findElement(By.id("last-name")).sendKeys("Le");
-        driver.findElement(By.id("postal-code")).sendKeys("10000");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("last-name"))).sendKeys("Le");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("postal-code"))).sendKeys("10000");
+
+        // Ensure the fields are populated before clicking continue
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("continue")));
+
+        // Wait for a second to make sure the element is ready
         Thread.sleep(1000);
 
+        // Click the continue button
         WebElement continueButton = driver.findElement(By.id("continue"));
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", continueButton);
+
 
         // Finish
         WebElement finishButton = driver.findElement(By.id("finish"));
