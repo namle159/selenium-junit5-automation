@@ -24,7 +24,7 @@ public class SauceDemoTest {
         DriverManager.setDriver(driver);
         driver.manage().window().maximize();
         driver.get("https://www.saucedemo.com/");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(50)); // CI chậm hơn
+        wait = new WebDriverWait(driver, Duration.ofSeconds(60)); // CI chậm hơn
         System.out.println("🧩 Running test: " + testInfo.getDisplayName() + " on " + browser);
     }
 
@@ -130,7 +130,7 @@ public class SauceDemoTest {
         wait.until(ExpectedConditions.elementToBeClickable(By.className("shopping_cart_link"))).click();
         
         // Wait for URL to change to cart page
-        wait.until(ExpectedConditions.urlContains("cart.html")); // Increased wait for cart page loading
+        wait.until(ExpectedConditions.urlToBe("https://www.saucedemo.com/cart.html")); // Increased wait for cart page loading
 
         // Checkout (presence + scroll + JS click để tránh overlay/headless issues)
         WebElement checkout = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("checkout")));
