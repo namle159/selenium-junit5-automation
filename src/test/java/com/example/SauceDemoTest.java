@@ -114,7 +114,7 @@ public class SauceDemoTest {
     @Test
     @Order(7)   
     @DisplayName("Add item to cart and checkout")
-    void testAddToCartAndCheckout() {
+    void testAddToCartAndCheckout() throws InterruptedException{
         WebDriver driver = DriverManager.getDriver();
 
         // Login
@@ -127,12 +127,12 @@ public class SauceDemoTest {
         wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-sauce-labs-backpack"))).click();
 
         // Open cart
-        wait.until(ExpectedConditions.elementToBeClickable(By.className("shopping_cart_link"))).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.className("shopping_cart_link"))).click();
-
+        // wait.until(ExpectedConditions.elementToBeClickable(By.className("shopping_cart_link"))).click();
+        WebElement cartLink = driver.findElement(By.className("shopping_cart_link"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", cartLink);
         
-        // // Wait for URL to change to cart page
-        // wait.until(ExpectedConditions.urlToBe("https://www.saucedemo.com/cart.html")); // Increased wait for cart page loading
+        // Wait for URL to change to cart page
+        wait.until(ExpectedConditions.urlToBe("https://www.saucedemo.com/cart.html")); // Increased wait for cart page loading
 
         // Checkout (presence + scroll + JS click để tránh overlay/headless issues)
         WebElement checkout = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("checkout")));
@@ -143,10 +143,14 @@ public class SauceDemoTest {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first-name"))).sendKeys("Nam");
         driver.findElement(By.id("last-name")).sendKeys("Le");
         driver.findElement(By.id("postal-code")).sendKeys("10000");
-        driver.findElement(By.id("continue")).click();
+        Thread.sleep(1000);
+
+        WebElement continueButton = driver.findElement(By.id("continue"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", continueButton);
 
         // Finish
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("finish"))).click();
+        WebElement finishButton = driver.findElement(By.id("finish"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", finishButton);
 
         // Verify by stable selector
         WebElement header = wait.until(
