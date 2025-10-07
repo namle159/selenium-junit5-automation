@@ -4,11 +4,7 @@ import java.time.Duration;
 
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
-import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import util.DriverFactory;
@@ -28,10 +24,7 @@ public class SauceDemoTest {
         DriverManager.setDriver(driver);
         driver.manage().window().maximize();
         driver.get("https://www.saucedemo.com/");
-
-        // Khởi tạo WebDriverWait (10s)
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
+        wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // CI chậm hơn
         System.out.println("🧩 Running test: " + testInfo.getDisplayName() + " on " + browser);
     }
 
@@ -41,12 +34,10 @@ public class SauceDemoTest {
     void testLoginSuccess() {
         WebDriver driver = DriverManager.getDriver();
 
-        // Login steps
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name"))).sendKeys("standard_user");
         driver.findElement(By.id("password")).sendKeys("secret_sauce");
         driver.findElement(By.id("login-button")).click();
 
-        // Wait until inventory page loads
         wait.until(ExpectedConditions.urlContains("inventory.html"));
         Assertions.assertTrue(driver.getCurrentUrl().contains("inventory.html"));
     }
@@ -57,37 +48,44 @@ public class SauceDemoTest {
     void testAddToCartAndCheckout() {
         WebDriver driver = DriverManager.getDriver();
 
-        // Login first
+        // Login
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name"))).sendKeys("standard_user");
         driver.findElement(By.id("password")).sendKeys("secret_sauce");
         driver.findElement(By.id("login-button")).click();
+        wait.until(ExpectedConditions.urlContains("inventory.html"));
 
-        // Wait for inventory to load and add item
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".inventory_item button"))).click();
+        // Add specific item (ổn định hơn so với ".inventory_item button")
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("add-to-cart-sauce-labs-backpack"))).click();
 
         // Open cart
         wait.until(ExpectedConditions.elementToBeClickable(By.className("shopping_cart_link"))).click();
+        wait.until(ExpectedConditions.urlContains("cart.html"));
 
-        // Checkout process
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("checkout"))).click();
+        // Checkout (presence + scroll + JS click để tránh overlay/headless issues)
+        WebElement checkout = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("checkout")));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", checkout);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", checkout);
+
+        // Your info
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first-name"))).sendKeys("Nam");
         driver.findElement(By.id("last-name")).sendKeys("Le");
         driver.findElement(By.id("postal-code")).sendKeys("10000");
         driver.findElement(By.id("continue")).click();
+
+        // Finish
         wait.until(ExpectedConditions.elementToBeClickable(By.id("finish"))).click();
 
-        // Verify success message
-        Assertions.assertTrue(
-            wait.until(ExpectedConditions.textToBePresentInElementLocated(By.tagName("body"), "Thank you for your order!"))
+        // Verify by stable selector
+        WebElement header = wait.until(
+            ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h2.complete-header"))
         );
+        Assertions.assertEquals("Thank you for your order!", header.getText());
     }
 
     @AfterEach
     void tearDown() {
         WebDriver driver = DriverManager.getDriver();
-        if (driver != null) {
-            driver.quit();
-        }
+        if (driver != null) driver.quit();
         DriverManager.unload();
     }
 }
