@@ -128,6 +128,8 @@ public class SauceDemoTest {
 
         // Open cart
         wait.until(ExpectedConditions.elementToBeClickable(By.className("shopping_cart_link"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.className("shopping_cart_link"))).click();
+
         
         // // Wait for URL to change to cart page
         // wait.until(ExpectedConditions.urlToBe("https://www.saucedemo.com/cart.html")); // Increased wait for cart page loading
